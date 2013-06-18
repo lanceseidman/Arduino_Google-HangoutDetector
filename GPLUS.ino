@@ -1,4 +1,36 @@
-#include <aJSON.h>
+*/
+* TITLE: Arduino Google+ Hangout Detector
+* AUTHOR: Lance Seidman <@LanceSeidman; http://lance.compulsivetech.biz>
+* WARNING: THIS IS USED WITH THE GOLIVE.PHP FILE. THE PHP FILE USES THE HTTPS API FROM GOOGLE.
+* 
+* WHY NOT GO FOR THE API ITSELF? ... NO HTTPS???
+* COULD WE USE HTTPS WITH ARDUINO? TECHNICALLY, YES BUT IT WOULD BE HUGE & TERRIBLE 
+* SO THIS IS THE NEXT BEST THING... 
+*
+* WHY BUILD THIS?
+* I MADE THIS IN A FEW DAYS FOR THE FOLKS AT ADAFRUIT, TRYING TO DO WHAT LADYADA WANTED,
+* AN ARDUINO BASED API GRABBER... UNFORTUNATELY HAD TO MAKE IT A LITTLE LESS COOL AS THE
+* GOOGLE+ API REQUIRES HTTPS ONLY, NO HTTP.
+*
+* ISSUES. WARRANTY. CONTACT FOR SUPPORT.
+* THE WHOLE PROJECT IS "AS-IS" AND HAS A ZERO WARRANTY WITH IT. IT'S OPEN TO THE PUBLIC TO
+* BE USED AS HE/SHE DESIRES. IF YOU FIND A FLAW, I HAVE TOO BUT LIKELY NOT THE SAME THING
+* SO GO FORTH AND FILE A SUPPORT TICKET. YOU CAN ALWAYS FOLLOW ME ON TWITTER IF YOU NEED
+* ME FOR ANYTHING (@LANCESEIDMAN).
+*
+* DIRECTIONS
+* ----------
+* 1). UPLOAD goLIVE.php TO A WEB HOST OR LOCAL HTTPD/PHP BOX (EVEN USE A RASPBERRY PI).
+* 2). EDIT: G_API[], GET (/path-to-getLIVE.php), & Host (www.your-server-name.com).
+* 3). OPTIONAL EDIT: IP_ADD (Set a Specific Local IP) or MAC_ADD (Set a Specific MAC Address).
+*
+* PS... WHY IS aJSON HERE IF NO JSON IS USED?
+* IN MY OTHER PROJECTS, I WAS ASKED HOW DO I USE JSON? SO, I INCLUDED MOST OF WHAT YOU NEED
+* TO KNOW IN ORDER TO GET STARTED WITH aJSON (CAN BE FOUND ON GITHUB).
+*
+*/
+
+// #include <aJSON.h> - NOT USED SINCE HTTPS API. 
 #include <SPI.h>
 #include <Ethernet.h>
 #include <EthernetClient.h>
@@ -16,9 +48,8 @@ IPAddress IP_ADD (192,168,0,188);
 // Setup to use Client via Ethernet Lib
 EthernetClient client;
 // Since G+ API IS HTTPS use the getLIVE.php Script & Upload to your Server/Pi 
-char G_API[] = "www.wearingdigital.com"; 
-char G_API1[] = "www.your-server-name.com"; 
-char rtnchar[500];
+char G_API[] = "www.your-server-name.com"; 
+// char rtnchar[500]; - NOT USED; NORMALLY FOR OUR JSON API
 /*
 WE HAVE NO USE FOR JSON HERE... BUT DEFINE FOR OTHER API'S
 char rtnchar[500];
@@ -49,12 +80,8 @@ void setup()
   /* SINCE API IS HTTPS, BELOW IS USELESS
   client.println("GET /plus/v1/activities?query=hangout&maxResults=5&key= HTTP/1.1");
   */
-  client.println("GET /lab/getLIVE.php HTTP/1.1");
-  client.println("Host: www.wearingdigital.com"); // Would be GoogleAPIS.com
-  /*
-    client.println("GET /path-to-getLIVE.php HTTP/1.1");
-  client.println("Host: www.your-server-name.com"); // Would be GoogleAPIS.com
-  */
+  client.println("GET /path-to-getLIVE.php HTTP/1.1");
+  client.println("Host: www.your-server-name.com"); // Would be GoogleAPIS.com; Insert Domain Hosting PHP File.
   client.println("Connection: close");
   client.println();
   }
@@ -75,21 +102,20 @@ void FindHangout()
   if(client.available()) // We have a Connection!
   {
     char incoming = client.read(); // Store Available Data to incoming
-   // Serial.println(incoming);
-   //rtnchar[0] = incoming;
+    // Use for Debug: Serial.println(incoming);
     if(incoming == '0')
     {
       Serial.println("No Hangout Found...");
       delay(50000);
     }
-    Serial.print(incoming);
-    // THIS IS A TERRIBLE WAY TO DO BUT WE ONLY HAVE A OFFLINE or ON AIR
-   /* else
+
+    // THIS IS A TERRIBLE WAY TO GO BUT WE ONLY HAVE A OFFLINE (0) or ON AIR (1)
+    else
     {
       Serial.println("Hangout Found!");
       
       delay(50000);
-    }*/
+    }
     
     /*
     SINCE WE CAN'T USE G+ API... THIS IS USELESS...
