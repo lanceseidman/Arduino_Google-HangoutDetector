@@ -1,6 +1,6 @@
 <?php
 // SET G+ API FEED
-$GPlus_Key = "AIzaSyD_ULeDJJNnCuXN9aKeNF3B113fBhshUmI"; // Put your G+ API Key Here
+$GPlus_Key = ""; // Put your G+ API Key Here
 $json = "https://www.googleapis.com/plus/v1/activities?query=hangout&key=" . $GPlus_Key;
 
 $obj = json_decode(file_get_contents($json)); // Get & Store JSON API
